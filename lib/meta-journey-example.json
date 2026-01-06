@@ -1,0 +1,376 @@
+{
+  "id": "meta-journey-001",
+  "name": "Discovering Customer Journey Tool Value",
+  "description": "A self-referential journey mapping your experience using this tool to understand its capabilities and discover opportunities for AI-enhanced workflow optimization",
+  "createdAt": "2024-01-06T00:00:00.000Z",
+  "updatedAt": "2024-01-06T00:00:00.000Z",
+  "actors": [
+    {
+      "id": "actor-user",
+      "name": "Workflow Designer",
+      "role": "Primary User",
+      "color": "#3b82f6"
+    },
+    {
+      "id": "actor-tool",
+      "name": "Journey Mapping Tool",
+      "role": "System",
+      "color": "#8b5cf6"
+    },
+    {
+      "id": "actor-ai",
+      "name": "AI Analysis Engine",
+      "role": "Automation",
+      "color": "#10b981"
+    },
+    {
+      "id": "actor-consultant",
+      "name": "A9 Consultant",
+      "role": "Advisor",
+      "color": "#f59e0b"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "node-start",
+      "type": "touchpoint",
+      "position": {
+        "x": 100,
+        "y": 100
+      },
+      "data": {
+        "label": "First Load - Tool Opens",
+        "description": "User opens the customer journey mapping tool for the first time",
+        "actors": ["actor-user", "actor-tool"],
+        "criteria": ["Curious about AI opportunities", "Needs to map workflows", "Wants process insights"],
+        "aiOpportunity": "low",
+        "automationPotential": "low",
+        "duration": "30s",
+        "metrics": ["Time to first interaction", "Initial engagement"],
+        "painPoints": ["Unfamiliar interface", "Learning curve"]
+      }
+    },
+    {
+      "id": "node-explore",
+      "type": "touchpoint",
+      "position": {
+        "x": 100,
+        "y": 250
+      },
+      "data": {
+        "label": "Explore Example Journey",
+        "description": "User reviews the pre-loaded example to understand structure and capabilities",
+        "actors": ["actor-user", "actor-tool"],
+        "criteria": ["Wants to see real example", "Learns by doing"],
+        "aiOpportunity": "medium",
+        "automationPotential": "medium",
+        "duration": "3min",
+        "metrics": ["Example view time", "Node interactions"],
+        "painPoints": ["Information overload", "Too many features at once"],
+        "notes": "This is where users discover the tool's core features through hands-on exploration"
+      }
+    },
+    {
+      "id": "node-decision-create",
+      "type": "decision",
+      "position": {
+        "x": 100,
+        "y": 400
+      },
+      "data": {
+        "label": "Ready to Create Own Journey?",
+        "description": "User decides whether to start mapping their own workflow or continue exploring",
+        "actors": ["actor-user"],
+        "criteria": ["Understands basic concepts", "Has workflow in mind", "Feels confident"],
+        "aiOpportunity": "high",
+        "automationPotential": "high",
+        "notes": "AI could suggest starting templates based on user's industry or use case"
+      }
+    },
+    {
+      "id": "node-continue-explore",
+      "type": "touchpoint",
+      "position": {
+        "x": -100,
+        "y": 550
+      },
+      "data": {
+        "label": "Deep Dive Features",
+        "description": "User explores analysis panel, actor management, and export options",
+        "actors": ["actor-user", "actor-tool", "actor-ai"],
+        "criteria": ["Wants more confidence", "Exploring capabilities"],
+        "aiOpportunity": "high",
+        "automationPotential": "high",
+        "duration": "5min",
+        "metrics": ["Feature discovery rate", "Panel interactions"],
+        "notes": "AI-powered tooltips could guide users to most relevant features"
+      }
+    },
+    {
+      "id": "node-create-first",
+      "type": "touchpoint",
+      "position": {
+        "x": 300,
+        "y": 550
+      },
+      "data": {
+        "label": "Create First Node",
+        "description": "User adds their first node to map their actual workflow",
+        "actors": ["actor-user", "actor-tool"],
+        "criteria": ["Has specific workflow", "Understood node types"],
+        "aiOpportunity": "high",
+        "automationPotential": "medium",
+        "duration": "2min",
+        "metrics": ["Time to first node", "Node type selected"],
+        "painPoints": ["Choosing right node type", "Defining clear labels"],
+        "notes": "This is the 'aha moment' - user sees their workflow taking shape"
+      }
+    },
+    {
+      "id": "node-build-journey",
+      "type": "process",
+      "position": {
+        "x": 300,
+        "y": 700
+      },
+      "data": {
+        "label": "Build Complete Journey Map",
+        "description": "User adds multiple nodes, connections, actors, and criteria to create full workflow",
+        "actors": ["actor-user", "actor-tool"],
+        "criteria": ["Has workflow mapped mentally", "Understands connections"],
+        "aiOpportunity": "medium",
+        "automationPotential": "low",
+        "duration": "15min",
+        "metrics": ["Nodes created", "Connections made", "Actors assigned"],
+        "notes": "Core creative work - requires human insight and domain knowledge"
+      }
+    },
+    {
+      "id": "node-analyze",
+      "type": "touchpoint",
+      "position": {
+        "x": 300,
+        "y": 850
+      },
+      "data": {
+        "label": "Run AI Analysis",
+        "description": "User reviews automated insights about bottlenecks, AI opportunities, and optimization suggestions",
+        "actors": ["actor-user", "actor-ai"],
+        "criteria": ["Journey map complete", "Ready for insights"],
+        "aiOpportunity": "critical",
+        "automationPotential": "high",
+        "duration": "5min",
+        "metrics": ["Analysis viewed", "Insights acted upon", "Automation opportunities found"],
+        "notes": "KEY VALUE MOMENT: AI reveals hidden patterns and opportunities the user might have missed"
+      }
+    },
+    {
+      "id": "node-decision-value",
+      "type": "decision",
+      "position": {
+        "x": 300,
+        "y": 1000
+      },
+      "data": {
+        "label": "Found Valuable Insights?",
+        "description": "User evaluates if the analysis provided actionable intelligence about their workflow",
+        "actors": ["actor-user"],
+        "criteria": ["Discovered automation opportunities", "Identified bottlenecks", "Found AI agent potential"],
+        "aiOpportunity": "low",
+        "automationPotential": "low",
+        "notes": "This decision determines tool adoption and continued use"
+      }
+    },
+    {
+      "id": "node-refine",
+      "type": "process",
+      "position": {
+        "x": 100,
+        "y": 1150
+      },
+      "data": {
+        "label": "Refine Based on Insights",
+        "description": "User iterates on journey map, adding detail to high-value areas identified by analysis",
+        "actors": ["actor-user", "actor-tool", "actor-ai"],
+        "criteria": ["Wants deeper analysis", "Found gaps to fill"],
+        "aiOpportunity": "high",
+        "automationPotential": "medium",
+        "duration": "10min",
+        "notes": "Iterative improvement cycle - tool guides user to optimize their workflow design"
+      }
+    },
+    {
+      "id": "node-share",
+      "type": "handoff",
+      "position": {
+        "x": 500,
+        "y": 1150
+      },
+      "data": {
+        "label": "Export & Share with Team",
+        "description": "User exports journey as JSON/CSV/DAG and shares with stakeholders",
+        "actors": ["actor-user", "actor-consultant"],
+        "criteria": ["Satisfied with analysis", "Ready to present", "Need team input"],
+        "aiOpportunity": "medium",
+        "automationPotential": "high",
+        "duration": "2min",
+        "metrics": ["Export format used", "Share actions"],
+        "notes": "HANDOFF: Journey insights move from individual exploration to team collaboration"
+      }
+    },
+    {
+      "id": "node-implement",
+      "type": "process",
+      "position": {
+        "x": 500,
+        "y": 1300
+      },
+      "data": {
+        "label": "Implement Recommendations",
+        "description": "Team uses insights to deploy AI agents, automate workflows, or optimize handoffs in Atlassian tools",
+        "actors": ["actor-user", "actor-consultant", "actor-ai"],
+        "criteria": ["Team alignment", "Technical feasibility", "ROI validated"],
+        "aiOpportunity": "critical",
+        "automationPotential": "critical",
+        "duration": "30days",
+        "metrics": ["Automation deployed", "Time saved", "AI agents implemented"],
+        "notes": "ULTIMATE VALUE: Real workflow improvements in production systems"
+      }
+    },
+    {
+      "id": "node-success",
+      "type": "endpoint",
+      "position": {
+        "x": 500,
+        "y": 1450
+      },
+      "data": {
+        "label": "Value Realized - Workflow Optimized",
+        "description": "Team has successfully optimized workflows with AI assistance, measured improvements, and discovered ongoing opportunities",
+        "actors": ["actor-user", "actor-consultant"],
+        "criteria": ["Measurable improvements", "Team adoption", "ROI proven"],
+        "aiOpportunity": "medium",
+        "automationPotential": "low",
+        "metrics": ["Time savings", "Cost reduction", "Quality improvement", "Team satisfaction"],
+        "notes": "SUCCESS: The tool has delivered concrete business value through AI-enhanced workflow design"
+      }
+    },
+    {
+      "id": "node-no-value",
+      "type": "endpoint",
+      "position": {
+        "x": 100,
+        "y": 1300
+      },
+      "data": {
+        "label": "Tool Not Suited for Use Case",
+        "description": "User determines the tool doesn't fit their needs or workflow complexity",
+        "actors": ["actor-user"],
+        "criteria": ["No insights found", "Too complex/simple", "Wrong use case"],
+        "aiOpportunity": "high",
+        "automationPotential": "medium",
+        "notes": "LEARNING OPPORTUNITY: Feedback loop to improve tool for different personas/industries"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "edge-1",
+      "source": "node-start",
+      "target": "node-explore",
+      "type": "default",
+      "label": "Auto-loads example"
+    },
+    {
+      "id": "edge-2",
+      "source": "node-explore",
+      "target": "node-decision-create",
+      "type": "default",
+      "label": "After exploration"
+    },
+    {
+      "id": "edge-3",
+      "source": "node-decision-create",
+      "target": "node-continue-explore",
+      "type": "default",
+      "label": "Not ready yet"
+    },
+    {
+      "id": "edge-4",
+      "source": "node-decision-create",
+      "target": "node-create-first",
+      "type": "default",
+      "label": "Ready to build"
+    },
+    {
+      "id": "edge-5",
+      "source": "node-continue-explore",
+      "target": "node-decision-create",
+      "type": "default",
+      "label": "Gained confidence"
+    },
+    {
+      "id": "edge-6",
+      "source": "node-create-first",
+      "target": "node-build-journey",
+      "type": "default",
+      "label": "Add more nodes"
+    },
+    {
+      "id": "edge-7",
+      "source": "node-build-journey",
+      "target": "node-analyze",
+      "type": "default",
+      "label": "Complete journey"
+    },
+    {
+      "id": "edge-8",
+      "source": "node-analyze",
+      "target": "node-decision-value",
+      "type": "default",
+      "label": "Review insights"
+    },
+    {
+      "id": "edge-9",
+      "source": "node-decision-value",
+      "target": "node-refine",
+      "type": "default",
+      "label": "Found insights, want more detail"
+    },
+    {
+      "id": "edge-10",
+      "source": "node-decision-value",
+      "target": "node-share",
+      "type": "default",
+      "label": "Satisfied with insights"
+    },
+    {
+      "id": "edge-11",
+      "source": "node-decision-value",
+      "target": "node-no-value",
+      "type": "default",
+      "label": "No value found"
+    },
+    {
+      "id": "edge-12",
+      "source": "node-refine",
+      "target": "node-analyze",
+      "type": "default",
+      "label": "Re-analyze with updates"
+    },
+    {
+      "id": "edge-13",
+      "source": "node-share",
+      "target": "node-implement",
+      "type": "default",
+      "label": "Team approval"
+    },
+    {
+      "id": "edge-14",
+      "source": "node-implement",
+      "target": "node-success",
+      "type": "default",
+      "label": "Successful deployment"
+    }
+  ]
+}

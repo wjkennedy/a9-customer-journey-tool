@@ -23,6 +23,8 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { analyzeJourney, exportToJSON, exportToDAGFormat, exportToCSV } from "@/lib/journey-analysis"
 import { useRef } from "react"
 import { ActorManager } from "@/components/actor-manager"
+import { exampleJourney } from "@/lib/example-journey"
+import { metaJourney } from "@/lib/meta-journey-example"
 
 const nodeTemplates = [
   { type: "touchpoint" as NodeType, label: "Touchpoint", icon: Circle },
@@ -149,6 +151,25 @@ export function Toolbar() {
         <BarChart3 className="mr-2 h-4 w-4" />
         {"Analyze"}
       </Button>
+
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="secondary" size="sm">
+            <FileJson className="mr-2 h-4 w-4" />
+            {"Examples"}
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="start">
+          <DropdownMenuItem onClick={() => importJourney(exampleJourney)}>
+            <Cog className="mr-2 h-4 w-4" />
+            {"Sales Process Example"}
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => importJourney(metaJourney)}>
+            <Network className="mr-2 h-4 w-4" />
+            {"Tool Discovery Journey (Meta)"}
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
 
       <Button variant="secondary" size="sm" onClick={handleImport}>
         <Upload className="mr-2 h-4 w-4" />
