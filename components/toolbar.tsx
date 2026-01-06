@@ -1,11 +1,27 @@
 "use client"
 
+import type React from "react"
+
 import { Button } from "@/components/ui/button"
 import { useJourneyStore } from "@/lib/journey-store"
-import { Circle, GitBranch, Users, Cog, CheckCircle2, Plus, Download, BarChart3, FileJson, Network } from "lucide-react"
+import {
+  Circle,
+  GitBranch,
+  Users,
+  Cog,
+  CheckCircle2,
+  Plus,
+  Download,
+  BarChart3,
+  FileJson,
+  Network,
+  Upload,
+  FileSpreadsheet,
+} from "lucide-react"
 import type { NodeType } from "@/lib/types"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { analyzeJourney, exportToJSON, exportToDAGFormat } from "@/lib/journey-analysis"
+import { analyzeJourney, exportToJSON, exportToDAGFormat, exportToCSV } from "@/lib/journey-analysis"
+import { useRef } from "react"
 
 const nodeTemplates = [
   { type: "touchpoint" as NodeType, label: "Touchpoint", icon: Circle },
@@ -16,7 +32,8 @@ const nodeTemplates = [
 ]
 
 export function Toolbar() {
-  const { currentJourney, addNode, setAnalysis } = useJourneyStore()
+  const { currentJourney, addNode, setAnalysis, importJourney } = useJourneyStore()
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleAddNode = (type: NodeType, label: string) => {
     if (!currentJourney) return
@@ -65,8 +82,47 @@ export function Toolbar() {
     }
   }
 
+  const handleExportCSV = () => {
+    if (currentJourney) {
+      const csv = exportToCSV(currentJourney)
+      const blob = new Blob([csv], { type: "text/csv" })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement("a")
+      a.href = url
+      a.download = `${currentJourney.name.replace(/\s+/g, "-")}.csv`
+      a.click()
+    }
+  }
+
+  const handleImport = () => {
+    fileInputRef.current?.click()
+  }
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (!file) return
+
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      try {
+        const content = e.target?.result as string
+        const journey = JSON.parse(content)
+        importJourney(journey)
+      } catch (error) {
+        console.error("Failed to import journey:", error)
+        alert("Failed to import journey. Please ensure the file is a valid JSON export.")
+      }
+    }
+    reader.readAsText(file)
+
+    // Reset input to allow importing the same file again
+    event.target.value = ""
+  }
+
   return (
     <div className="border-border flex items-center gap-2 border-b bg-card p-3">
+      <input ref={fileInputRef} type="file" accept=".json" className="hidden" onChange={handleFileChange} />
+
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="default" size="sm">
@@ -91,6 +147,11 @@ export function Toolbar() {
         {"Analyze"}
       </Button>
 
+      <Button variant="secondary" size="sm" onClick={handleImport}>
+        <Upload className="mr-2 h-4 w-4" />
+        {"Import"}
+      </Button>
+
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="secondary" size="sm">
@@ -102,6 +163,10 @@ export function Toolbar() {
           <DropdownMenuItem onClick={handleExportJSON}>
             <FileJson className="mr-2 h-4 w-4" />
             {"Export as JSON"}
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={handleExportCSV}>
+            <FileSpreadsheet className="mr-2 h-4 w-4" />
+            {"Export as CSV"}
           </DropdownMenuItem>
           <DropdownMenuItem onClick={handleExportDAG}>
             <Network className="mr-2 h-4 w-4" />

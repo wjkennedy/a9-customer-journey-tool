@@ -127,3 +127,47 @@ function getNodeColor(type: string): string {
       return "#6b7280"
   }
 }
+
+export function exportToCSV(journey: CustomerJourney): string {
+  const headers = [
+    "Node ID",
+    "Type",
+    "Label",
+    "Description",
+    "Actor",
+    "Actor Role",
+    "Duration",
+    "Automation Potential",
+    "AI Opportunity",
+    "Criteria Count",
+    "Connected To",
+  ]
+
+  const rows = journey.nodes.map((node) => {
+    const connectedNodes = journey.edges
+      .filter((edge) => edge.source === node.id)
+      .map((edge) => {
+        const targetNode = journey.nodes.find((n) => n.id === edge.target)
+        return targetNode ? targetNode.label : edge.target
+      })
+      .join("; ")
+
+    return [
+      node.id,
+      node.type,
+      node.label,
+      node.description || "",
+      node.actor?.name || "",
+      node.actor?.role || "",
+      node.duration || "",
+      node.automationPotential || "",
+      node.aiOpportunity || "",
+      node.criteria?.length.toString() || "0",
+      connectedNodes,
+    ]
+  })
+
+  const csvContent = [headers, ...rows].map((row) => row.map((cell) => `"${cell}"`).join(",")).join("\n")
+
+  return csvContent
+}
