@@ -13,6 +13,8 @@ interface JourneyState {
   updateEdge: (id: string, updates: Partial<JourneyEdge>) => void
   deleteEdge: (id: string) => void
   addActor: (actor: Actor) => void
+  updateActor: (id: string, updates: Partial<Actor>) => void
+  deleteActor: (id: string) => void
   setSelectedNode: (node: JourneyNode | null) => void
   setAnalysis: (analysis: AnalysisResult | null) => void
   createNewJourney: (name: string, description: string) => void
@@ -110,6 +112,31 @@ export const useJourneyStore = create<JourneyState>((set) => ({
         ? {
             ...state.currentJourney,
             actors: [...state.currentJourney.actors, actor],
+            updatedAt: new Date().toISOString(),
+          }
+        : null,
+    })),
+
+  updateActor: (id, updates) =>
+    set((state) => ({
+      currentJourney: state.currentJourney
+        ? {
+            ...state.currentJourney,
+            actors: state.currentJourney.actors.map((actor) => (actor.id === id ? { ...actor, ...updates } : actor)),
+            updatedAt: new Date().toISOString(),
+          }
+        : null,
+    })),
+
+  deleteActor: (id) =>
+    set((state) => ({
+      currentJourney: state.currentJourney
+        ? {
+            ...state.currentJourney,
+            actors: state.currentJourney.actors.filter((actor) => actor.id !== id),
+            nodes: state.currentJourney.nodes.map((node) =>
+              node.actor?.id === id ? { ...node, actor: undefined } : node,
+            ),
             updatedAt: new Date().toISOString(),
           }
         : null,

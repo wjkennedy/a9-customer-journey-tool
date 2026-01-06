@@ -22,6 +22,7 @@ import type { NodeType } from "@/lib/types"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { analyzeJourney, exportToJSON, exportToDAGFormat, exportToCSV } from "@/lib/journey-analysis"
 import { useRef } from "react"
+import { ActorManager } from "@/components/actor-manager"
 
 const nodeTemplates = [
   { type: "touchpoint" as NodeType, label: "Touchpoint", icon: Circle },
@@ -141,6 +142,8 @@ export function Toolbar() {
       </DropdownMenu>
 
       <div className="border-border mx-2 h-6 w-px bg-border" />
+
+      <ActorManager />
 
       <Button variant="secondary" size="sm" onClick={handleAnalyze}>
         <BarChart3 className="mr-2 h-4 w-4" />

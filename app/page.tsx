@@ -20,18 +20,19 @@ import {
 } from "@/components/ui/dialog"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Network } from "lucide-react"
+import { exampleJourney } from "@/lib/example-journey"
 
 export default function HomePage() {
-  const { currentJourney, createNewJourney } = useJourneyStore()
+  const { currentJourney, createNewJourney, importJourney } = useJourneyStore()
   const [showNewJourneyDialog, setShowNewJourneyDialog] = useState(false)
   const [journeyName, setJourneyName] = useState("")
   const [journeyDescription, setJourneyDescription] = useState("")
 
   useEffect(() => {
     if (!currentJourney) {
-      setShowNewJourneyDialog(true)
+      importJourney(exampleJourney)
     }
-  }, [currentJourney])
+  }, [currentJourney, importJourney])
 
   const handleCreateJourney = () => {
     if (journeyName.trim()) {
