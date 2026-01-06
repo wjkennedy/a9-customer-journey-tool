@@ -3,7 +3,7 @@
   "name": "Discovering Customer Journey Tool Value",
   "description": "A self-referential journey mapping your experience using this tool to understand its capabilities and discover opportunities for AI-enhanced workflow optimization",
   "createdAt": "2024-01-06T00:00:00.000Z",
-  "updatedAt": "2024-01-06T00:00:00.000Z",
+  "updatedAt": "2026-01-06T19:54:47.768Z",
   "actors": [
     {
       "id": "actor-user",
@@ -35,17 +35,38 @@
       "id": "node-start",
       "type": "touchpoint",
       "position": {
-        "x": 100,
-        "y": 100
+        "x": -251.23146938988657,
+        "y": -100.14307194284041
+      },
+      "label": "First Load - Tool Opens",
+      "description": "User opens the customer journey mapping tool for the first time",
+      "duration": "30s",
+      "aiOpportunity": "low",
+      "automationPotential": "low",
+      "criteria": [
+        {
+          "id": "f9712a72-8f40-4921-a35f-04a50de59e21",
+          "condition": "Curious about AI opportunities",
+          "type": "manual"
+        },
+        {
+          "id": "b7c110e5-90ad-4780-ac9c-4930967e2aaa",
+          "condition": "Needs to map workflows",
+          "type": "manual"
+        },
+        {
+          "id": "8ec099b3-1d3e-43e8-9447-552d3dd3df25",
+          "condition": "Wants process insights",
+          "type": "manual"
+        }
+      ],
+      "actor": {
+        "id": "actor-user",
+        "name": "Workflow Designer",
+        "role": "Primary User",
+        "color": "#3b82f6"
       },
       "data": {
-        "label": "First Load - Tool Opens",
-        "description": "User opens the customer journey mapping tool for the first time",
-        "actors": ["actor-user", "actor-tool"],
-        "criteria": ["Curious about AI opportunities", "Needs to map workflows", "Wants process insights"],
-        "aiOpportunity": "low",
-        "automationPotential": "low",
-        "duration": "30s",
         "metrics": ["Time to first interaction", "Initial engagement"],
         "painPoints": ["Unfamiliar interface", "Learning curve"]
       }
@@ -54,17 +75,33 @@
       "id": "node-explore",
       "type": "touchpoint",
       "position": {
-        "x": 100,
-        "y": 250
+        "x": 238.66121324144495,
+        "y": -30.592738115942865
+      },
+      "label": "Explore Example Journey",
+      "description": "User reviews the pre-loaded example to understand structure and capabilities",
+      "duration": "3min",
+      "aiOpportunity": "medium",
+      "automationPotential": "medium",
+      "criteria": [
+        {
+          "id": "dbab3c29-1991-458a-bfeb-826cb91b21a9",
+          "condition": "Wants to see real example",
+          "type": "manual"
+        },
+        {
+          "id": "113cac28-f061-4289-b1cc-62e22e46535e",
+          "condition": "Learns by doing",
+          "type": "manual"
+        }
+      ],
+      "actor": {
+        "id": "actor-user",
+        "name": "Workflow Designer",
+        "role": "Primary User",
+        "color": "#3b82f6"
       },
       "data": {
-        "label": "Explore Example Journey",
-        "description": "User reviews the pre-loaded example to understand structure and capabilities",
-        "actors": ["actor-user", "actor-tool"],
-        "criteria": ["Wants to see real example", "Learns by doing"],
-        "aiOpportunity": "medium",
-        "automationPotential": "medium",
-        "duration": "3min",
         "metrics": ["Example view time", "Node interactions"],
         "painPoints": ["Information overload", "Too many features at once"],
         "notes": "This is where users discover the tool's core features through hands-on exploration"
@@ -74,16 +111,37 @@
       "id": "node-decision-create",
       "type": "decision",
       "position": {
-        "x": 100,
-        "y": 400
+        "x": 835.8624240750405,
+        "y": 83.54274520209682
+      },
+      "label": "Ready to Create Own Journey?",
+      "description": "User decides whether to start mapping their own workflow or continue exploring",
+      "aiOpportunity": "high",
+      "automationPotential": "high",
+      "criteria": [
+        {
+          "id": "6f9e51fc-0b76-43bf-a542-1849485b151a",
+          "condition": "Understands basic concepts",
+          "type": "manual"
+        },
+        {
+          "id": "7ccbcc94-79c7-4d8d-b5d2-b57b32d386a7",
+          "condition": "Has workflow in mind",
+          "type": "manual"
+        },
+        {
+          "id": "30c77f0a-3b45-42cc-b53b-c2e1a2e69469",
+          "condition": "Feels confident",
+          "type": "manual"
+        }
+      ],
+      "actor": {
+        "id": "actor-user",
+        "name": "Workflow Designer",
+        "role": "Primary User",
+        "color": "#3b82f6"
       },
       "data": {
-        "label": "Ready to Create Own Journey?",
-        "description": "User decides whether to start mapping their own workflow or continue exploring",
-        "actors": ["actor-user"],
-        "criteria": ["Understands basic concepts", "Has workflow in mind", "Feels confident"],
-        "aiOpportunity": "high",
-        "automationPotential": "high",
         "notes": "AI could suggest starting templates based on user's industry or use case"
       }
     },
@@ -94,14 +152,30 @@
         "x": -100,
         "y": 550
       },
+      "label": "Deep Dive Features",
+      "description": "User explores analysis panel, actor management, and export options",
+      "duration": "5min",
+      "aiOpportunity": "high",
+      "automationPotential": "high",
+      "criteria": [
+        {
+          "id": "ef8027e5-1491-49dd-b384-b8885775d5db",
+          "condition": "Wants more confidence",
+          "type": "manual"
+        },
+        {
+          "id": "978f1661-7931-463b-ac51-343bda0b0474",
+          "condition": "Exploring capabilities",
+          "type": "manual"
+        }
+      ],
+      "actor": {
+        "id": "actor-user",
+        "name": "Workflow Designer",
+        "role": "Primary User",
+        "color": "#3b82f6"
+      },
       "data": {
-        "label": "Deep Dive Features",
-        "description": "User explores analysis panel, actor management, and export options",
-        "actors": ["actor-user", "actor-tool", "actor-ai"],
-        "criteria": ["Wants more confidence", "Exploring capabilities"],
-        "aiOpportunity": "high",
-        "automationPotential": "high",
-        "duration": "5min",
         "metrics": ["Feature discovery rate", "Panel interactions"],
         "notes": "AI-powered tooltips could guide users to most relevant features"
       }
@@ -110,17 +184,33 @@
       "id": "node-create-first",
       "type": "touchpoint",
       "position": {
-        "x": 300,
-        "y": 550
+        "x": 1569.2925705832567,
+        "y": 121.31974631589287
+      },
+      "label": "Create First Node",
+      "description": "User adds their first node to map their actual workflow",
+      "duration": "2min",
+      "aiOpportunity": "high",
+      "automationPotential": "medium",
+      "criteria": [
+        {
+          "id": "9a2c074e-73bf-41ce-8fd0-b08127f3b15e",
+          "condition": "Has specific workflow",
+          "type": "manual"
+        },
+        {
+          "id": "efa73de9-4817-438d-a1fb-08c79067cf6a",
+          "condition": "Understood node types",
+          "type": "manual"
+        }
+      ],
+      "actor": {
+        "id": "actor-user",
+        "name": "Workflow Designer",
+        "role": "Primary User",
+        "color": "#3b82f6"
       },
       "data": {
-        "label": "Create First Node",
-        "description": "User adds their first node to map their actual workflow",
-        "actors": ["actor-user", "actor-tool"],
-        "criteria": ["Has specific workflow", "Understood node types"],
-        "aiOpportunity": "high",
-        "automationPotential": "medium",
-        "duration": "2min",
         "metrics": ["Time to first node", "Node type selected"],
         "painPoints": ["Choosing right node type", "Defining clear labels"],
         "notes": "This is the 'aha moment' - user sees their workflow taking shape"
@@ -130,17 +220,33 @@
       "id": "node-build-journey",
       "type": "process",
       "position": {
-        "x": 300,
-        "y": 700
+        "x": 1999.1983763761482,
+        "y": 417.75456106973013
+      },
+      "label": "Build Complete Journey Map",
+      "description": "User adds multiple nodes, connections, actors, and criteria to create full workflow",
+      "duration": "15min",
+      "aiOpportunity": "medium",
+      "automationPotential": "low",
+      "criteria": [
+        {
+          "id": "2571e04b-28bb-42a6-ad52-0e923bbefa26",
+          "condition": "Has workflow mapped mentally",
+          "type": "manual"
+        },
+        {
+          "id": "f8457677-770e-4a11-9915-402024865fc0",
+          "condition": "Understands connections",
+          "type": "manual"
+        }
+      ],
+      "actor": {
+        "id": "actor-user",
+        "name": "Workflow Designer",
+        "role": "Primary User",
+        "color": "#3b82f6"
       },
       "data": {
-        "label": "Build Complete Journey Map",
-        "description": "User adds multiple nodes, connections, actors, and criteria to create full workflow",
-        "actors": ["actor-user", "actor-tool"],
-        "criteria": ["Has workflow mapped mentally", "Understands connections"],
-        "aiOpportunity": "medium",
-        "automationPotential": "low",
-        "duration": "15min",
         "metrics": ["Nodes created", "Connections made", "Actors assigned"],
         "notes": "Core creative work - requires human insight and domain knowledge"
       }
@@ -149,17 +255,33 @@
       "id": "node-analyze",
       "type": "touchpoint",
       "position": {
-        "x": 300,
-        "y": 850
+        "x": 2442.545729012658,
+        "y": 751.2268970568551
+      },
+      "label": "Run AI Analysis",
+      "description": "User reviews automated insights about bottlenecks, AI opportunities, and optimization suggestions",
+      "duration": "5min",
+      "aiOpportunity": "critical",
+      "automationPotential": "high",
+      "criteria": [
+        {
+          "id": "c8c11f0c-3354-4b91-9114-4928f3fa11fa",
+          "condition": "Journey map complete",
+          "type": "manual"
+        },
+        {
+          "id": "7abe6018-e91a-45c2-b537-b064f20b263e",
+          "condition": "Ready for insights",
+          "type": "manual"
+        }
+      ],
+      "actor": {
+        "id": "actor-user",
+        "name": "Workflow Designer",
+        "role": "Primary User",
+        "color": "#3b82f6"
       },
       "data": {
-        "label": "Run AI Analysis",
-        "description": "User reviews automated insights about bottlenecks, AI opportunities, and optimization suggestions",
-        "actors": ["actor-user", "actor-ai"],
-        "criteria": ["Journey map complete", "Ready for insights"],
-        "aiOpportunity": "critical",
-        "automationPotential": "high",
-        "duration": "5min",
         "metrics": ["Analysis viewed", "Insights acted upon", "Automation opportunities found"],
         "notes": "KEY VALUE MOMENT: AI reveals hidden patterns and opportunities the user might have missed"
       }
@@ -168,16 +290,37 @@
       "id": "node-decision-value",
       "type": "decision",
       "position": {
-        "x": 300,
-        "y": 1000
+        "x": 3250.448044760443,
+        "y": 871.8171122639362
+      },
+      "label": "Found Valuable Insights?",
+      "description": "User evaluates if the analysis provided actionable intelligence about their workflow",
+      "aiOpportunity": "low",
+      "automationPotential": "low",
+      "criteria": [
+        {
+          "id": "b8600a15-230a-43ec-a53d-ea0ff2ef2e8b",
+          "condition": "Discovered automation opportunities",
+          "type": "manual"
+        },
+        {
+          "id": "c4d7f643-5b6a-4717-8c2f-c93445f78277",
+          "condition": "Identified bottlenecks",
+          "type": "manual"
+        },
+        {
+          "id": "e10b6253-f9dc-4bce-919f-c686fe2222d5",
+          "condition": "Found AI agent potential",
+          "type": "manual"
+        }
+      ],
+      "actor": {
+        "id": "actor-user",
+        "name": "Workflow Designer",
+        "role": "Primary User",
+        "color": "#3b82f6"
       },
       "data": {
-        "label": "Found Valuable Insights?",
-        "description": "User evaluates if the analysis provided actionable intelligence about their workflow",
-        "actors": ["actor-user"],
-        "criteria": ["Discovered automation opportunities", "Identified bottlenecks", "Found AI agent potential"],
-        "aiOpportunity": "low",
-        "automationPotential": "low",
         "notes": "This decision determines tool adoption and continued use"
       }
     },
@@ -185,17 +328,33 @@
       "id": "node-refine",
       "type": "process",
       "position": {
-        "x": 100,
-        "y": 1150
+        "x": 2881.8,
+        "y": 1304.5421875
+      },
+      "label": "Refine Based on Insights",
+      "description": "User iterates on journey map, adding detail to high-value areas identified by analysis",
+      "duration": "10min",
+      "aiOpportunity": "high",
+      "automationPotential": "medium",
+      "criteria": [
+        {
+          "id": "f0ba8808-eed3-48a1-8175-5a384484fa81",
+          "condition": "Wants deeper analysis",
+          "type": "manual"
+        },
+        {
+          "id": "ad547a0e-6a09-411f-af55-a4c3b6adee1f",
+          "condition": "Found gaps to fill",
+          "type": "manual"
+        }
+      ],
+      "actor": {
+        "id": "actor-user",
+        "name": "Workflow Designer",
+        "role": "Primary User",
+        "color": "#3b82f6"
       },
       "data": {
-        "label": "Refine Based on Insights",
-        "description": "User iterates on journey map, adding detail to high-value areas identified by analysis",
-        "actors": ["actor-user", "actor-tool", "actor-ai"],
-        "criteria": ["Wants deeper analysis", "Found gaps to fill"],
-        "aiOpportunity": "high",
-        "automationPotential": "medium",
-        "duration": "10min",
         "notes": "Iterative improvement cycle - tool guides user to optimize their workflow design"
       }
     },
@@ -203,17 +362,38 @@
       "id": "node-share",
       "type": "handoff",
       "position": {
-        "x": 500,
-        "y": 1150
+        "x": 4164.799999999999,
+        "y": 988
+      },
+      "label": "Export & Share with Team",
+      "description": "User exports journey as JSON/CSV/DAG and shares with stakeholders",
+      "duration": "2min",
+      "aiOpportunity": "medium",
+      "automationPotential": "high",
+      "criteria": [
+        {
+          "id": "494fb597-7a43-471b-8c78-58cc4e1322a7",
+          "condition": "Satisfied with analysis",
+          "type": "manual"
+        },
+        {
+          "id": "9d3e7f37-3125-408c-a00b-508ee12e45c5",
+          "condition": "Ready to present",
+          "type": "manual"
+        },
+        {
+          "id": "67509cda-1aeb-427e-8346-839163e7fa27",
+          "condition": "Need team input",
+          "type": "manual"
+        }
+      ],
+      "actor": {
+        "id": "actor-user",
+        "name": "Workflow Designer",
+        "role": "Primary User",
+        "color": "#3b82f6"
       },
       "data": {
-        "label": "Export & Share with Team",
-        "description": "User exports journey as JSON/CSV/DAG and shares with stakeholders",
-        "actors": ["actor-user", "actor-consultant"],
-        "criteria": ["Satisfied with analysis", "Ready to present", "Need team input"],
-        "aiOpportunity": "medium",
-        "automationPotential": "high",
-        "duration": "2min",
         "metrics": ["Export format used", "Share actions"],
         "notes": "HANDOFF: Journey insights move from individual exploration to team collaboration"
       }
@@ -222,17 +402,38 @@
       "id": "node-implement",
       "type": "process",
       "position": {
-        "x": 500,
-        "y": 1300
+        "x": 4836.199999999999,
+        "y": 1130
+      },
+      "label": "Implement Recommendations",
+      "description": "Team uses insights to deploy AI agents, automate workflows, or optimize handoffs in Atlassian tools",
+      "duration": "30days",
+      "aiOpportunity": "critical",
+      "automationPotential": "critical",
+      "criteria": [
+        {
+          "id": "5938bbc7-5fe9-4285-861d-b603219e3b38",
+          "condition": "Team alignment",
+          "type": "manual"
+        },
+        {
+          "id": "ff6ec4ca-5900-4dae-b0f8-5f412c120cad",
+          "condition": "Technical feasibility",
+          "type": "manual"
+        },
+        {
+          "id": "040222b7-56cd-418f-bcd7-f81e4189f0ea",
+          "condition": "ROI validated",
+          "type": "manual"
+        }
+      ],
+      "actor": {
+        "id": "actor-user",
+        "name": "Workflow Designer",
+        "role": "Primary User",
+        "color": "#3b82f6"
       },
       "data": {
-        "label": "Implement Recommendations",
-        "description": "Team uses insights to deploy AI agents, automate workflows, or optimize handoffs in Atlassian tools",
-        "actors": ["actor-user", "actor-consultant", "actor-ai"],
-        "criteria": ["Team alignment", "Technical feasibility", "ROI validated"],
-        "aiOpportunity": "critical",
-        "automationPotential": "critical",
-        "duration": "30days",
         "metrics": ["Automation deployed", "Time saved", "AI agents implemented"],
         "notes": "ULTIMATE VALUE: Real workflow improvements in production systems"
       }
@@ -241,16 +442,37 @@
       "id": "node-success",
       "type": "endpoint",
       "position": {
-        "x": 500,
-        "y": 1450
+        "x": 5534.800000000004,
+        "y": 1360
+      },
+      "label": "Value Realized - Workflow Optimized",
+      "description": "Team has successfully optimized workflows with AI assistance, measured improvements, and discovered ongoing opportunities",
+      "aiOpportunity": "medium",
+      "automationPotential": "low",
+      "criteria": [
+        {
+          "id": "ae437402-a38f-4104-9f49-6ab2de597697",
+          "condition": "Measurable improvements",
+          "type": "manual"
+        },
+        {
+          "id": "ff4a1606-8a6e-426c-ada7-343846ff3c44",
+          "condition": "Team adoption",
+          "type": "manual"
+        },
+        {
+          "id": "61ec84aa-e90b-49a4-8348-8ad64379ba2f",
+          "condition": "ROI proven",
+          "type": "manual"
+        }
+      ],
+      "actor": {
+        "id": "actor-user",
+        "name": "Workflow Designer",
+        "role": "Primary User",
+        "color": "#3b82f6"
       },
       "data": {
-        "label": "Value Realized - Workflow Optimized",
-        "description": "Team has successfully optimized workflows with AI assistance, measured improvements, and discovered ongoing opportunities",
-        "actors": ["actor-user", "actor-consultant"],
-        "criteria": ["Measurable improvements", "Team adoption", "ROI proven"],
-        "aiOpportunity": "medium",
-        "automationPotential": "low",
         "metrics": ["Time savings", "Cost reduction", "Quality improvement", "Team satisfaction"],
         "notes": "SUCCESS: The tool has delivered concrete business value through AI-enhanced workflow design"
       }
@@ -259,16 +481,37 @@
       "id": "node-no-value",
       "type": "endpoint",
       "position": {
-        "x": 100,
-        "y": 1300
+        "x": 4105.2,
+        "y": 594
+      },
+      "label": "Tool Not Suited for Use Case",
+      "description": "User determines the tool doesn't fit their needs or workflow complexity",
+      "aiOpportunity": "high",
+      "automationPotential": "medium",
+      "criteria": [
+        {
+          "id": "b9f54fe5-93d4-4a35-aef1-311a439c0755",
+          "condition": "No insights found",
+          "type": "manual"
+        },
+        {
+          "id": "a2dff7c3-a6fa-49e1-885e-83cf09d7afe2",
+          "condition": "Too complex/simple",
+          "type": "manual"
+        },
+        {
+          "id": "565242df-8927-4746-b3a7-3022e74185fb",
+          "condition": "Wrong use case",
+          "type": "manual"
+        }
+      ],
+      "actor": {
+        "id": "actor-user",
+        "name": "Workflow Designer",
+        "role": "Primary User",
+        "color": "#3b82f6"
       },
       "data": {
-        "label": "Tool Not Suited for Use Case",
-        "description": "User determines the tool doesn't fit their needs or workflow complexity",
-        "actors": ["actor-user"],
-        "criteria": ["No insights found", "Too complex/simple", "Wrong use case"],
-        "aiOpportunity": "high",
-        "automationPotential": "medium",
         "notes": "LEARNING OPPORTUNITY: Feedback loop to improve tool for different personas/industries"
       }
     }

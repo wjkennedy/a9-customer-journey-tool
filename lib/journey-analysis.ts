@@ -37,8 +37,8 @@ export function analyzeJourney(journey: CustomerJourney): AnalysisResult {
       (node) =>
         node.aiOpportunity ||
         node.type === "decision" ||
-        node.label.toLowerCase().includes("review") ||
-        node.label.toLowerCase().includes("analyze"),
+        (node.label && node.label.toLowerCase().includes("review")) ||
+        (node.label && node.label.toLowerCase().includes("analyze")),
     )
     .map((node) => ({
       nodeId: node.id,
@@ -70,7 +70,7 @@ export function analyzeJourney(journey: CustomerJourney): AnalysisResult {
 }
 
 function determineAICapability(node: JourneyNode): string {
-  const label = node.label.toLowerCase()
+  const label = node.label?.toLowerCase() || ""
 
   if (label.includes("review") || label.includes("check")) return "Document Review & Validation"
   if (label.includes("analyze") || label.includes("assess")) return "Data Analysis & Insights"
