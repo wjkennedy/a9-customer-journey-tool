@@ -4,10 +4,14 @@ import { useJourneyStore } from "@/lib/journey-store"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { TrendingUp, GitBranch, Users, Clock, Sparkles, Bot, AlertTriangle } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { TrendingUp, GitBranch, Users, Clock, Sparkles, Bot, AlertTriangle, Copy, Check } from "lucide-react"
+import { exportRecommendations } from "@/lib/journey-analysis"
+import { useState } from "react"
 
 export function AnalysisPanel() {
-  const { analysis } = useJourneyStore()
+  const { analysis, currentJourney } = useJourneyStore()
+  const [copied, setCopied] = useState(false)
 
   if (!analysis) {
     return (
@@ -19,9 +23,35 @@ export function AnalysisPanel() {
     )
   }
 
+  const handleCopyRecommendations = async () => {
+    if (!currentJourney) return
+
+    const text = exportRecommendations(analysis, currentJourney.name)
+    await navigator.clipboard.writeText(text)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
+
   return (
     <ScrollArea className="h-full">
       <div className="space-y-4 p-4">
+        <div className="flex items-center justify-between">
+          <h3 className="font-semibold text-sm">Analysis Results</h3>
+          <Button variant="outline" size="sm" onClick={handleCopyRecommendations} className="gap-2 bg-transparent">
+            {copied ? (
+              <>
+                <Check className="h-4 w-4" />
+                Copied!
+              </>
+            ) : (
+              <>
+                <Copy className="h-4 w-4" />
+                Copy All
+              </>
+            )}
+          </Button>
+        </div>
+
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
