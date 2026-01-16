@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import { useState } from "react"
+import { useState, useRef } from "react"
 
 import { Button } from "@/components/ui/button"
 import { useJourneyStore } from "@/lib/journey-store"
@@ -20,6 +20,8 @@ import {
   FileSpreadsheet,
   FilePlus,
   Trash2,
+  ImageIcon,
+  LayoutGrid,
 } from "lucide-react"
 import type { NodeType } from "@/lib/types"
 import {
@@ -30,7 +32,6 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu"
 import { analyzeJourney, exportToJSON, exportToDAGFormat, exportToCSV } from "@/lib/journey-analysis"
-import { useRef } from "react"
 import { ActorManager } from "@/components/actor-manager"
 import { exampleJourney } from "@/lib/example-journey"
 import { metaJourney } from "@/lib/meta-journey-example"
@@ -45,6 +46,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
+import { calculateAutoLayout, getNewNodePosition } from "@/lib/auto-layout"
 
 const nodeTemplates = [
   { type: "touchpoint" as NodeType, label: "Touchpoint", icon: Circle },
@@ -55,7 +57,16 @@ const nodeTemplates = [
 ]
 
 export function Toolbar() {
-  const { currentJourney, addNode, setAnalysis, importJourney, createNewJourney, clearAllNodes } = useJourneyStore()
+  const {
+    currentJourney,
+    addNode,
+    setAnalysis,
+    importJourney,
+    createNewJourney,
+    clearAllNodes,
+    updateNode,
+    selectedNode,
+  } = useJourneyStore()
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [showNewDialog, setShowNewDialog] = useState(false)
   const [newJourneyName, setNewJourneyName] = useState("")
@@ -64,14 +75,13 @@ export function Toolbar() {
   const handleAddNode = (type: NodeType, label: string) => {
     if (!currentJourney) return
 
+    const position = getNewNodePosition(currentJourney, selectedNode?.id)
+
     const newNode = {
       id: crypto.randomUUID(),
       type,
       label,
-      position: {
-        x: Math.random() * 400 + 100,
-        y: Math.random() * 300 + 100,
-      },
+      position,
     }
 
     addNode(newNode)
@@ -81,6 +91,75 @@ export function Toolbar() {
     if (currentJourney) {
       const analysis = analyzeJourney(currentJourney)
       setAnalysis(analysis)
+    }
+  }
+
+  const handleAutoLayout = () => {
+    if (!currentJourney || currentJourney.nodes.length === 0) return
+
+    const newPositions = calculateAutoLayout(currentJourney)
+    newPositions.forEach((position, nodeId) => {
+      updateNode(nodeId, { position })
+    })
+  }
+
+  const handleExportSVG = async () => {
+    if (!currentJourney) return
+
+    // Get the ReactFlow container
+    const flowElement = document.querySelector(".react-flow") as HTMLElement
+    if (!flowElement) return
+
+    // Use html-to-image for SVG export
+    const { toSvg } = await import("html-to-image")
+
+    try {
+      const dataUrl = await toSvg(flowElement, {
+        backgroundColor: "#0a0a0f",
+        filter: (node) => {
+          // Exclude controls and minimap from export
+          if (node.classList?.contains("react-flow__controls")) return false
+          if (node.classList?.contains("react-flow__minimap")) return false
+          return true
+        },
+      })
+
+      const link = document.createElement("a")
+      link.download = `${currentJourney.name.replace(/\s+/g, "-")}.svg`
+      link.href = dataUrl
+      link.click()
+    } catch (error) {
+      console.error("Failed to export SVG:", error)
+      alert("Failed to export SVG. Please try again.")
+    }
+  }
+
+  const handleExportPNG = async () => {
+    if (!currentJourney) return
+
+    const flowElement = document.querySelector(".react-flow") as HTMLElement
+    if (!flowElement) return
+
+    const { toPng } = await import("html-to-image")
+
+    try {
+      const dataUrl = await toPng(flowElement, {
+        backgroundColor: "#0a0a0f",
+        pixelRatio: 2, // Higher quality
+        filter: (node) => {
+          if (node.classList?.contains("react-flow__controls")) return false
+          if (node.classList?.contains("react-flow__minimap")) return false
+          return true
+        },
+      })
+
+      const link = document.createElement("a")
+      link.download = `${currentJourney.name.replace(/\s+/g, "-")}.png`
+      link.href = dataUrl
+      link.click()
+    } catch (error) {
+      console.error("Failed to export PNG:", error)
+      alert("Failed to export PNG. Please try again.")
     }
   }
 
@@ -141,7 +220,6 @@ export function Toolbar() {
     }
     reader.readAsText(file)
 
-    // Reset input to allow importing the same file again
     event.target.value = ""
   }
 
@@ -209,6 +287,16 @@ export function Toolbar() {
 
       <ActorManager />
 
+      <Button
+        variant="secondary"
+        size="sm"
+        onClick={handleAutoLayout}
+        title="Auto-arrange nodes in a stair-step layout"
+      >
+        <LayoutGrid className="mr-2 h-4 w-4" />
+        {"Auto Layout"}
+      </Button>
+
       <Button variant="secondary" size="sm" onClick={handleAnalyze}>
         <BarChart3 className="mr-2 h-4 w-4" />
         {"Analyze"}
@@ -246,6 +334,15 @@ export function Toolbar() {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start">
+          <DropdownMenuItem onClick={handleExportPNG}>
+            <ImageIcon className="mr-2 h-4 w-4" />
+            {"Export as PNG"}
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={handleExportSVG}>
+            <ImageIcon className="mr-2 h-4 w-4" />
+            {"Export as SVG"}
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
           <DropdownMenuItem onClick={handleExportJSON}>
             <FileJson className="mr-2 h-4 w-4" />
             {"Export as JSON"}

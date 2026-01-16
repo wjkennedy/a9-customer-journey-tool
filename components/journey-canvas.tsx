@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useCallback, useEffect } from "react"
+import { useCallback, useEffect, useRef } from "react"
 import ReactFlow, {
   type Node,
   type Edge,
@@ -16,6 +16,8 @@ import ReactFlow, {
   BackgroundVariant,
   MarkerType,
   ConnectionMode,
+  useReactFlow,
+  ReactFlowProvider,
 } from "reactflow"
 import "reactflow/dist/style.css"
 import { useJourneyStore } from "@/lib/journey-store"
@@ -25,10 +27,17 @@ const nodeTypes = {
   custom: JourneyNodeComponent,
 }
 
-export function JourneyCanvas() {
-  const { currentJourney, updateNode, addEdge: addJourneyEdge, setSelectedNode } = useJourneyStore()
+export const NODE_WIDTH = 200
+export const NODE_HEIGHT = 80
+export const HORIZONTAL_GAP = 250
+export const VERTICAL_STEP = NODE_HEIGHT * 0.7 // 70% of node height as vertical separator
+
+function JourneyCanvasInner() {
+  const { currentJourney, updateNode, addEdge: addJourneyEdge, setSelectedNode, setJourney } = useJourneyStore()
   const [nodes, setNodes, onNodesChange] = useNodesState([])
   const [edges, setEdges, onEdgesChange] = useEdgesState([])
+  const { getNodes, toObject } = useReactFlow()
+  const flowWrapperRef = useRef<HTMLDivElement>(null)
 
   // Sync journey store with ReactFlow state
   useEffect(() => {
@@ -114,7 +123,7 @@ export function JourneyCanvas() {
   }
 
   return (
-    <div className="h-full w-full">
+    <div className="h-full w-full" ref={flowWrapperRef}>
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -137,5 +146,13 @@ export function JourneyCanvas() {
         <Background variant={BackgroundVariant.Dots} gap={16} size={1} color="#333" />
       </ReactFlow>
     </div>
+  )
+}
+
+export function JourneyCanvas() {
+  return (
+    <ReactFlowProvider>
+      <JourneyCanvasInner />
+    </ReactFlowProvider>
   )
 }
