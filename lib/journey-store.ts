@@ -19,6 +19,7 @@ interface JourneyState {
   setAnalysis: (analysis: AnalysisResult | null) => void
   createNewJourney: (name: string, description: string) => void
   importJourney: (journey: CustomerJourney) => void
+  clearAllNodes: () => void
 }
 
 export const useJourneyStore = create<JourneyState>((set) => ({
@@ -171,4 +172,18 @@ export const useJourneyStore = create<JourneyState>((set) => ({
       selectedNode: null,
       analysis: null,
     }),
+
+  clearAllNodes: () =>
+    set((state) => ({
+      currentJourney: state.currentJourney
+        ? {
+            ...state.currentJourney,
+            nodes: [],
+            edges: [],
+            updatedAt: new Date().toISOString(),
+          }
+        : null,
+      selectedNode: null,
+      analysis: null,
+    })),
 }))

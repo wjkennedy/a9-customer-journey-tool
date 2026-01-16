@@ -1,6 +1,7 @@
 "use client"
 
 import type React from "react"
+import { useState } from "react"
 
 import { Button } from "@/components/ui/button"
 import { useJourneyStore } from "@/lib/journey-store"
@@ -17,14 +18,33 @@ import {
   Network,
   Upload,
   FileSpreadsheet,
+  FilePlus,
+  Trash2,
 } from "lucide-react"
 import type { NodeType } from "@/lib/types"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu"
 import { analyzeJourney, exportToJSON, exportToDAGFormat, exportToCSV } from "@/lib/journey-analysis"
 import { useRef } from "react"
 import { ActorManager } from "@/components/actor-manager"
 import { exampleJourney } from "@/lib/example-journey"
 import { metaJourney } from "@/lib/meta-journey-example"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
 
 const nodeTemplates = [
   { type: "touchpoint" as NodeType, label: "Touchpoint", icon: Circle },
@@ -35,8 +55,11 @@ const nodeTemplates = [
 ]
 
 export function Toolbar() {
-  const { currentJourney, addNode, setAnalysis, importJourney } = useJourneyStore()
+  const { currentJourney, addNode, setAnalysis, importJourney, createNewJourney, clearAllNodes } = useJourneyStore()
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const [showNewDialog, setShowNewDialog] = useState(false)
+  const [newJourneyName, setNewJourneyName] = useState("")
+  const [newJourneyDescription, setNewJourneyDescription] = useState("")
 
   const handleAddNode = (type: NodeType, label: string) => {
     if (!currentJourney) return
@@ -122,9 +145,48 @@ export function Toolbar() {
     event.target.value = ""
   }
 
+  const handleNewJourney = () => {
+    setNewJourneyName("")
+    setNewJourneyDescription("")
+    setShowNewDialog(true)
+  }
+
+  const handleCreateJourney = () => {
+    if (newJourneyName.trim()) {
+      createNewJourney(newJourneyName.trim(), newJourneyDescription.trim())
+      setShowNewDialog(false)
+    }
+  }
+
+  const handleClearAll = () => {
+    if (confirm("Are you sure you want to delete all nodes and edges? This cannot be undone.")) {
+      clearAllNodes()
+    }
+  }
+
   return (
     <div className="border-border flex items-center gap-2 border-b bg-card p-3">
       <input ref={fileInputRef} type="file" accept=".json" className="hidden" onChange={handleFileChange} />
+
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="secondary" size="sm">
+            <FilePlus className="mr-2 h-4 w-4" />
+            {"New"}
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="start">
+          <DropdownMenuItem onClick={handleNewJourney}>
+            <FilePlus className="mr-2 h-4 w-4" />
+            {"New Journey Map"}
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem onClick={handleClearAll} className="text-destructive focus:text-destructive">
+            <Trash2 className="mr-2 h-4 w-4" />
+            {"Clear All Nodes"}
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
 
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
@@ -198,6 +260,43 @@ export function Toolbar() {
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
+
+      <Dialog open={showNewDialog} onOpenChange={setShowNewDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Create New Journey Map</DialogTitle>
+            <DialogDescription>Start a fresh journey map. This will replace the current map.</DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <Label htmlFor="journey-name">Journey Name</Label>
+              <Input
+                id="journey-name"
+                placeholder="e.g., Customer Onboarding Process"
+                value={newJourneyName}
+                onChange={(e) => setNewJourneyName(e.target.value)}
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="journey-description">Description (optional)</Label>
+              <Textarea
+                id="journey-description"
+                placeholder="Describe the purpose of this journey map..."
+                value={newJourneyDescription}
+                onChange={(e) => setNewJourneyDescription(e.target.value)}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowNewDialog(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleCreateJourney} disabled={!newJourneyName.trim()}>
+              Create Journey
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
