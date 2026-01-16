@@ -1,22 +1,22 @@
 import type { CustomerJourney } from "./types"
 
-const NODE_WIDTH = 200
-const NODE_HEIGHT = 80
-const HORIZONTAL_GAP = 250
-const VERTICAL_STEP = NODE_HEIGHT * 0.7 // 70% of node height as vertical separator
+export const NODE_WIDTH = 200
+export const NODE_HEIGHT = 80
+export const HORIZONTAL_GAP = 300 // Increased for less horizontal crowding
+export const VERTICAL_GAP = NODE_HEIGHT + NODE_HEIGHT * 0.7 // Full node height + 70% padding
 
 interface LayoutNode {
   id: string
   depth: number
   verticalIndex: number
-  children: string[]
+  parentId?: string
 }
 
 /**
  * Auto-layout algorithm that stair-steps nodes
  * - Nodes flow left to right based on edge connections
  * - Each child is placed below and to the right of its parent
- * - 70% node height as vertical separator padding
+ * - 70% node height as vertical separator padding between nodes
  */
 export function calculateAutoLayout(journey: CustomerJourney): Map<string, { x: number; y: number }> {
   const positions = new Map<string, { x: number; y: number }>()
@@ -25,10 +25,12 @@ export function calculateAutoLayout(journey: CustomerJourney): Map<string, { x: 
 
   // Build adjacency list and find root nodes (no incoming edges)
   const outgoingEdges = new Map<string, string[]>()
+  const incomingEdges = new Map<string, string[]>()
   const incomingCount = new Map<string, number>()
 
   journey.nodes.forEach((node) => {
     outgoingEdges.set(node.id, [])
+    incomingEdges.set(node.id, [])
     incomingCount.set(node.id, 0)
   })
 
@@ -36,6 +38,11 @@ export function calculateAutoLayout(journey: CustomerJourney): Map<string, { x: 
     const children = outgoingEdges.get(edge.source) || []
     children.push(edge.target)
     outgoingEdges.set(edge.source, children)
+
+    const parents = incomingEdges.get(edge.target) || []
+    parents.push(edge.source)
+    incomingEdges.set(edge.target, parents)
+
     incomingCount.set(edge.target, (incomingCount.get(edge.target) || 0) + 1)
   })
 
@@ -47,73 +54,96 @@ export function calculateAutoLayout(journey: CustomerJourney): Map<string, { x: 
     rootNodes.push(journey.nodes[0])
   }
 
-  // BFS to assign depths
-  const depths = new Map<string, number>()
+  // BFS to assign depths and track parent relationships
+  const layoutNodes = new Map<string, LayoutNode>()
   const visited = new Set<string>()
-  const queue: { id: string; depth: number }[] = rootNodes.map((n) => ({ id: n.id, depth: 0 }))
+  const queue: { id: string; depth: number; parentId?: string }[] = rootNodes.map((n) => ({
+    id: n.id,
+    depth: 0,
+  }))
 
   while (queue.length > 0) {
-    const { id, depth } = queue.shift()!
+    const { id, depth, parentId } = queue.shift()!
 
     if (visited.has(id)) continue
     visited.add(id)
-    depths.set(id, depth)
+
+    layoutNodes.set(id, { id, depth, verticalIndex: 0, parentId })
 
     const children = outgoingEdges.get(id) || []
     children.forEach((childId) => {
       if (!visited.has(childId)) {
-        queue.push({ id: childId, depth: depth + 1 })
+        queue.push({ id: childId, depth: depth + 1, parentId: id })
       }
     })
   }
 
   // Handle disconnected nodes
   journey.nodes.forEach((node) => {
-    if (!depths.has(node.id)) {
-      depths.set(node.id, 0)
+    if (!layoutNodes.has(node.id)) {
+      layoutNodes.set(node.id, { id: node.id, depth: 0, verticalIndex: 0 })
     }
   })
 
   // Group nodes by depth
   const nodesByDepth = new Map<number, string[]>()
-  depths.forEach((depth, id) => {
-    const nodes = nodesByDepth.get(depth) || []
-    nodes.push(id)
-    nodesByDepth.set(depth, nodes)
+  layoutNodes.forEach((node) => {
+    const nodes = nodesByDepth.get(node.depth) || []
+    nodes.push(node.id)
+    nodesByDepth.set(node.depth, nodes)
   })
 
-  // Track vertical positions at each depth for stair-stepping
-  const verticalOffsetByDepth = new Map<number, number>()
-
-  // Position nodes with stair-step layout
+  // Process nodes depth by depth, placing children relative to their parents
   const sortedDepths = Array.from(nodesByDepth.keys()).sort((a, b) => a - b)
+
+  // Track the next available Y position globally to prevent overlaps
+  let globalNextY = 100
 
   sortedDepths.forEach((depth) => {
     const nodesAtDepth = nodesByDepth.get(depth) || []
 
-    nodesAtDepth.forEach((nodeId, index) => {
-      // Get parent's vertical position for stair-stepping
-      let baseY = 100
+    // Sort nodes at this depth by their parent's Y position for visual coherence
+    nodesAtDepth.sort((a, b) => {
+      const nodeA = layoutNodes.get(a)!
+      const nodeB = layoutNodes.get(b)!
 
-      // Find parent node to stair-step from
-      const parentEdge = journey.edges.find((e) => e.target === nodeId)
-      if (parentEdge && positions.has(parentEdge.source)) {
-        const parentPos = positions.get(parentEdge.source)!
-        // Count siblings (other children of the same parent)
-        const siblings = journey.edges.filter((e) => e.source === parentEdge.source)
-        const siblingIndex = siblings.findIndex((e) => e.target === nodeId)
-        baseY = parentPos.y + siblingIndex * VERTICAL_STEP
+      if (nodeA.parentId && nodeB.parentId) {
+        const parentAPos = positions.get(nodeA.parentId)
+        const parentBPos = positions.get(nodeB.parentId)
+        if (parentAPos && parentBPos) {
+          return parentAPos.y - parentBPos.y
+        }
+      }
+      return 0
+    })
+
+    nodesAtDepth.forEach((nodeId) => {
+      const node = layoutNodes.get(nodeId)!
+      let y: number
+
+      if (node.parentId && positions.has(node.parentId)) {
+        const parentPos = positions.get(node.parentId)!
+        // Calculate Y based on parent + stair-step offset
+        const siblings = outgoingEdges.get(node.parentId) || []
+        const siblingIndex = siblings.indexOf(nodeId)
+
+        // Start from parent's Y position and add offset for each sibling
+        const desiredY = parentPos.y + siblingIndex * VERTICAL_GAP
+
+        // Ensure we don't overlap with previously placed nodes
+        y = Math.max(desiredY, globalNextY)
       } else {
-        // For root nodes or disconnected nodes, stack them vertically
-        const currentOffset = verticalOffsetByDepth.get(depth) || 0
-        baseY = 100 + currentOffset
-        verticalOffsetByDepth.set(depth, currentOffset + VERTICAL_STEP)
+        // Root node or disconnected node
+        y = globalNextY
       }
 
       positions.set(nodeId, {
         x: 100 + depth * HORIZONTAL_GAP,
-        y: baseY,
+        y: y,
       })
+
+      // Update the global next Y to prevent overlaps
+      globalNextY = y + VERTICAL_GAP
     })
   })
 
@@ -136,7 +166,7 @@ export function getNewNodePosition(journey: CustomerJourney, lastNodeId?: string
       const outgoingCount = journey.edges.filter((e) => e.source === lastNodeId).length
       return {
         x: lastNode.position.x + HORIZONTAL_GAP,
-        y: lastNode.position.y + outgoingCount * VERTICAL_STEP,
+        y: lastNode.position.y + outgoingCount * VERTICAL_GAP,
       }
     }
   }
@@ -153,6 +183,50 @@ export function getNewNodePosition(journey: CustomerJourney, lastNodeId?: string
 
   return {
     x: maxX + HORIZONTAL_GAP,
-    y: maxY + VERTICAL_STEP,
+    y: maxY + VERTICAL_GAP,
+  }
+}
+
+/**
+ * Calculate the bounding box of all nodes for export
+ */
+export function getNodesBounds(journey: CustomerJourney): {
+  minX: number
+  minY: number
+  maxX: number
+  maxY: number
+  width: number
+  height: number
+} {
+  if (journey.nodes.length === 0) {
+    return { minX: 0, minY: 0, maxX: 800, maxY: 600, width: 800, height: 600 }
+  }
+
+  let minX = Number.POSITIVE_INFINITY
+  let minY = Number.POSITIVE_INFINITY
+  let maxX = Number.NEGATIVE_INFINITY
+  let maxY = Number.NEGATIVE_INFINITY
+
+  journey.nodes.forEach((node) => {
+    minX = Math.min(minX, node.position.x)
+    minY = Math.min(minY, node.position.y)
+    maxX = Math.max(maxX, node.position.x + NODE_WIDTH)
+    maxY = Math.max(maxY, node.position.y + NODE_HEIGHT)
+  })
+
+  // Add padding
+  const padding = 50
+  minX -= padding
+  minY -= padding
+  maxX += padding
+  maxY += padding
+
+  return {
+    minX,
+    minY,
+    maxX,
+    maxY,
+    width: maxX - minX,
+    height: maxY - minY,
   }
 }

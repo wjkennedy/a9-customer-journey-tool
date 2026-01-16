@@ -46,7 +46,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { calculateAutoLayout, getNewNodePosition } from "@/lib/auto-layout"
+import { calculateAutoLayout, getNewNodePosition, getNodesBounds } from "@/lib/auto-layout"
 
 const nodeTemplates = [
   { type: "touchpoint" as NodeType, label: "Touchpoint", icon: Circle },
@@ -106,23 +106,39 @@ export function Toolbar() {
   const handleExportSVG = async () => {
     if (!currentJourney) return
 
-    // Get the ReactFlow container
-    const flowElement = document.querySelector(".react-flow") as HTMLElement
-    if (!flowElement) return
+    const flowContainer = document.querySelector(".react-flow") as HTMLElement
+    if (!flowContainer) return
 
-    // Use html-to-image for SVG export
     const { toSvg } = await import("html-to-image")
 
+    const bounds = getNodesBounds(currentJourney)
+
     try {
-      const dataUrl = await toSvg(flowElement, {
+      const viewport = document.querySelector(".react-flow__viewport") as HTMLElement
+      const originalTransform = viewport.style.transform
+
+      const scale = 1.5
+
+      viewport.style.transform = `translate(${-bounds.minX * scale + 50}px, ${-bounds.minY * scale + 50}px) scale(${scale})`
+
+      await new Promise((resolve) => setTimeout(resolve, 100))
+
+      const dataUrl = await toSvg(flowContainer, {
         backgroundColor: "#0a0a0f",
+        width: bounds.width * scale + 100,
+        height: bounds.height * scale + 100,
+        style: {
+          width: `${bounds.width * scale + 100}px`,
+          height: `${bounds.height * scale + 100}px`,
+        },
         filter: (node) => {
-          // Exclude controls and minimap from export
           if (node.classList?.contains("react-flow__controls")) return false
           if (node.classList?.contains("react-flow__minimap")) return false
           return true
         },
       })
+
+      viewport.style.transform = originalTransform
 
       const link = document.createElement("a")
       link.download = `${currentJourney.name.replace(/\s+/g, "-")}.svg`
@@ -137,21 +153,39 @@ export function Toolbar() {
   const handleExportPNG = async () => {
     if (!currentJourney) return
 
-    const flowElement = document.querySelector(".react-flow") as HTMLElement
-    if (!flowElement) return
+    const flowContainer = document.querySelector(".react-flow") as HTMLElement
+    if (!flowContainer) return
 
     const { toPng } = await import("html-to-image")
 
+    const bounds = getNodesBounds(currentJourney)
+
     try {
-      const dataUrl = await toPng(flowElement, {
+      const viewport = document.querySelector(".react-flow__viewport") as HTMLElement
+      const originalTransform = viewport.style.transform
+
+      const scale = 1.5
+
+      viewport.style.transform = `translate(${-bounds.minX * scale + 50}px, ${-bounds.minY * scale + 50}px) scale(${scale})`
+
+      await new Promise((resolve) => setTimeout(resolve, 100))
+
+      const dataUrl = await toPng(flowContainer, {
         backgroundColor: "#0a0a0f",
-        pixelRatio: 2, // Higher quality
+        width: bounds.width * scale + 100,
+        height: bounds.height * scale + 100,
+        style: {
+          width: `${bounds.width * scale + 100}px`,
+          height: `${bounds.height * scale + 100}px`,
+        },
         filter: (node) => {
           if (node.classList?.contains("react-flow__controls")) return false
           if (node.classList?.contains("react-flow__minimap")) return false
           return true
         },
       })
+
+      viewport.style.transform = originalTransform
 
       const link = document.createElement("a")
       link.download = `${currentJourney.name.replace(/\s+/g, "-")}.png`
