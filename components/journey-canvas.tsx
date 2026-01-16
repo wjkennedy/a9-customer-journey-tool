@@ -15,6 +15,7 @@ import ReactFlow, {
   type Connection,
   BackgroundVariant,
   MarkerType,
+  ConnectionMode,
 } from "reactflow"
 import "reactflow/dist/style.css"
 import { useJourneyStore } from "@/lib/journey-store"
@@ -43,14 +44,23 @@ export function JourneyCanvas() {
         id: edge.id,
         source: edge.source,
         target: edge.target,
+        sourceHandle: null,
+        targetHandle: null,
         label: edge.label,
-        type: edge.type === "conditional" ? "smoothstep" : "default",
+        type: "smoothstep",
         markerEnd: {
           type: MarkerType.ArrowClosed,
         },
         style: {
           stroke: edge.type === "conditional" ? "#f59e0b" : "#64748b",
           strokeWidth: 2,
+        },
+        labelStyle: {
+          fill: "#94a3b8",
+          fontSize: 12,
+        },
+        labelBgStyle: {
+          fill: "#1e293b",
         },
       }))
 
@@ -114,6 +124,11 @@ export function JourneyCanvas() {
         onNodeClick={onNodeClick}
         onNodeDragStop={onNodeDragStop}
         nodeTypes={nodeTypes}
+        connectionMode={ConnectionMode.Strict}
+        defaultEdgeOptions={{
+          type: "smoothstep",
+          markerEnd: { type: MarkerType.ArrowClosed },
+        }}
         fitView
         className="bg-background"
       >
