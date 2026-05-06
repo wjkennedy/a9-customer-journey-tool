@@ -8,14 +8,14 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
 import { useJourneyStore } from "@/lib/journey-store"
-import { GripVertical, Cube, GitBranch } from "lucide-react"
+import { GripVertical, Box, GitBranch } from "lucide-react"
 
 export function ViewModeToggle() {
   const { viewMode, setViewMode } = useJourneyStore()
 
   const viewModes = [
     { id: "standard", label: "Standard Flow", icon: GripVertical },
-    { id: "isometric", label: "Isometric View", icon: Cube },
+    { id: "isometric", label: "Isometric View", icon: Box },
     { id: "actor-paths", label: "Actor Paths", icon: GitBranch },
   ]
 
