@@ -22,6 +22,8 @@ import ReactFlow, {
 import "reactflow/dist/style.css"
 import { useJourneyStore } from "@/lib/journey-store"
 import { JourneyNodeComponent } from "./journey-node"
+import { IsometricView } from "./isometric-view"
+import { ActorPathsView } from "./actor-paths-view"
 
 const nodeTypes = {
   custom: JourneyNodeComponent,
@@ -33,7 +35,7 @@ export const HORIZONTAL_GAP = 250
 export const VERTICAL_STEP = NODE_HEIGHT * 0.7 // 70% of node height as vertical separator
 
 function JourneyCanvasInner() {
-  const { currentJourney, updateNode, addEdge: addJourneyEdge, setSelectedNode, setJourney } = useJourneyStore()
+  const { currentJourney, updateNode, addEdge: addJourneyEdge, setSelectedNode, setJourney, viewMode } = useJourneyStore()
   const [nodes, setNodes, onNodesChange] = useNodesState([])
   const [edges, setEdges, onEdgesChange] = useEdgesState([])
   const { getNodes, toObject } = useReactFlow()
@@ -118,6 +120,23 @@ function JourneyCanvasInner() {
           <p className="text-muted-foreground text-lg">{"No journey loaded"}</p>
           <p className="text-muted-foreground text-sm">{"Create a new journey to get started"}</p>
         </div>
+      </div>
+    )
+  }
+
+  // Render different views based on viewMode
+  if (viewMode === "isometric") {
+    return (
+      <div className="h-full w-full bg-gradient-to-br from-slate-900 to-slate-800" ref={flowWrapperRef}>
+        <IsometricView />
+      </div>
+    )
+  }
+
+  if (viewMode === "actor-paths") {
+    return (
+      <div className="h-full w-full bg-gradient-to-br from-slate-900 to-slate-800 overflow-auto" ref={flowWrapperRef}>
+        <ActorPathsView />
       </div>
     )
   }

@@ -33,6 +33,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { analyzeJourney, exportToJSON, exportToDAGFormat, exportToCSV } from "@/lib/journey-analysis"
 import { ActorManager } from "@/components/actor-manager"
+import { ViewModeToggle } from "@/components/view-mode-toggle"
 import { exampleJourney } from "@/lib/example-journey"
 import { metaJourney } from "@/lib/meta-journey-example"
 import {
@@ -330,6 +331,8 @@ export function Toolbar() {
         <LayoutGrid className="mr-2 h-4 w-4" />
         {"Auto Layout"}
       </Button>
+
+      <ViewModeToggle />
 
       <Button variant="secondary" size="sm" onClick={handleAnalyze}>
         <BarChart3 className="mr-2 h-4 w-4" />

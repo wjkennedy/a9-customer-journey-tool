@@ -5,6 +5,7 @@ interface JourneyState {
   currentJourney: CustomerJourney | null
   selectedNode: JourneyNode | null
   analysis: AnalysisResult | null
+  viewMode: "standard" | "isometric" | "actor-paths"
   setJourney: (journey: CustomerJourney) => void
   addNode: (node: JourneyNode) => void
   updateNode: (id: string, updates: Partial<JourneyNode>) => void
@@ -17,6 +18,7 @@ interface JourneyState {
   deleteActor: (id: string) => void
   setSelectedNode: (node: JourneyNode | null) => void
   setAnalysis: (analysis: AnalysisResult | null) => void
+  setViewMode: (mode: "standard" | "isometric" | "actor-paths") => void
   createNewJourney: (name: string, description: string) => void
   importJourney: (journey: CustomerJourney) => void
   clearAllNodes: () => void
@@ -26,6 +28,7 @@ export const useJourneyStore = create<JourneyState>((set) => ({
   currentJourney: null,
   selectedNode: null,
   analysis: null,
+  viewMode: "standard",
 
   setJourney: (journey) => set({ currentJourney: journey }),
 
@@ -146,6 +149,8 @@ export const useJourneyStore = create<JourneyState>((set) => ({
   setSelectedNode: (node) => set({ selectedNode: node }),
 
   setAnalysis: (analysis) => set({ analysis }),
+
+  setViewMode: (mode) => set({ viewMode: mode }),
 
   createNewJourney: (name, description) =>
     set({

@@ -27,6 +27,14 @@ const nodeColors = {
   endpoint: "bg-red-500/20 border-red-500",
 }
 
+export const NODE_COLORS = {
+  touchpoint: "#3b82f6",
+  decision: "#f59e0b",
+  handoff: "#10b981",
+  process: "#a855f7",
+  endpoint: "#ef4444",
+}
+
 export function JourneyNodeComponent({ data }: JourneyNodeProps) {
   const node = data.journeyNode
   const Icon = nodeIcons[node.type]
