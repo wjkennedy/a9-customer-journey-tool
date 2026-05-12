@@ -58,8 +58,8 @@ const calculateNodePositions = (nodes: any[], edges: any[]) => {
     const indexAtDepth = nodes.filter((n) => depthMap.get(n.id) === depth && nodes.indexOf(n) <= nodes.indexOf(node)).length - 1
 
     positions[node.id] = {
-      x: 120 + depth * 220,
-      y: 100 + indexAtDepth * 180,
+      x: 100 + depth * 280,
+      y: 120 + indexAtDepth * 240,
       depth,
     }
   })
@@ -78,12 +78,12 @@ export function IsometricView() {
     )
   }
 
-  const boxWidth = 70
-  const boxHeight = 70
-  const boxDepth = 70
+  const boxWidth = 80
+  const boxHeight = 80
+  const boxDepth = 50
   const nodePositions = calculateNodePositions(currentJourney.nodes, currentJourney.edges)
 
-  // Generate isometric cube faces
+  // Generate isometric cube faces with all visible surfaces
   const generateCube = (x: number, y: number, z: number, color: string) => {
     // 8 corners of the cube
     const corners = [
@@ -99,24 +99,42 @@ export function IsometricView() {
 
     const [c0, c1, c2, c3, c4, c5, c6, c7] = corners
 
-    return {
-      // Top face (z + depth)
-      top: `${c4.sx},${c4.sy} ${c5.sx},${c5.sy} ${c6.sx},${c6.sy} ${c7.sx},${c7.sy}`,
-      topFill: color,
-      topOpacity: 0.95,
+    // Convert color to RGB for brightening
+    const brighten = (hex: string, percent: number) => {
+      const num = parseInt(hex.replace("#", ""), 16)
+      const amt = Math.round(2.55 * percent)
+      const R = Math.min(255, (num >> 16) + amt)
+      const G = Math.min(255, (num >> 8 & 0x00FF) + amt)
+      const B = Math.min(255, (num & 0x0000FF) + amt)
+      return `rgb(${R},${G},${B})`
+    }
 
-      // Left face (x = 0)
+    const topColor = brighten(color, 20)
+
+    return {
+      // Top face (z + depth) - brightest for 3D effect
+      top: `${c4.sx},${c4.sy} ${c5.sx},${c5.sy} ${c6.sx},${c6.sy} ${c7.sx},${c7.sy}`,
+      topFill: topColor,
+      topOpacity: 1,
+
+      // Left face (x = 0) - medium brightness
       left: `${c0.sx},${c0.sy} ${c4.sx},${c4.sy} ${c7.sx},${c7.sy} ${c3.sx},${c3.sy}`,
       leftFill: color,
-      leftOpacity: 0.7,
+      leftOpacity: 0.75,
 
-      // Right face (x + width)
+      // Right/Front face (x + width) - slightly darker
       right: `${c1.sx},${c1.sy} ${c5.sx},${c5.sy} ${c6.sx},${c6.sy} ${c2.sx},${c2.sy}`,
       rightFill: color,
-      rightOpacity: 0.85,
+      rightOpacity: 0.9,
+
+      // Front face (y + height)
+      front: `${c3.sx},${c3.sy} ${c2.sx},${c2.sy} ${c6.sx},${c6.sy} ${c7.sx},${c7.sy}`,
+      frontFill: color,
+      frontOpacity: 0.65,
 
       centerX: (c0.sx + c1.sx + c2.sx + c3.sx) / 4,
       centerY: (c0.sy + c1.sy + c2.sy + c3.sy) / 4,
+      topCenterY: (c4.sy + c5.sy + c6.sy + c7.sy) / 4 - 30, // Label position above box
     }
   }
 
@@ -197,15 +215,6 @@ export function IsometricView() {
 
         return (
           <g key={node.id}>
-            {/* Top face */}
-            <polygon
-              points={cube.top}
-              fill={cube.topFill}
-              opacity={cube.topOpacity}
-              stroke="rgba(255,255,255,0.2)"
-              strokeWidth="1"
-            />
-
             {/* Left face */}
             <polygon
               points={cube.left}
@@ -224,28 +233,49 @@ export function IsometricView() {
               strokeWidth="1"
             />
 
-            {/* Label - split into lines if too long */}
+            {/* Front face */}
+            <polygon
+              points={cube.front}
+              fill={cube.frontFill}
+              opacity={cube.frontOpacity}
+              stroke="rgba(0,0,0,0.25)"
+              strokeWidth="1"
+            />
+
+            {/* Top face - rendered last so it appears on top */}
+            <polygon
+              points={cube.top}
+              fill={cube.topFill}
+              opacity={cube.topOpacity}
+              stroke="rgba(255,255,255,0.3)"
+              strokeWidth="1.5"
+            />
+
+            {/* Label - positioned ABOVE the box, never truncated */}
             {node.label && (
               <g>
+                {/* Background for label for better readability */}
+                <rect
+                  x={cube.centerX - (node.label.length * 3.5)}
+                  y={cube.topCenterY - 18}
+                  width={node.label.length * 7}
+                  height="22"
+                  fill="rgba(0,0,0,0.3)"
+                  rx="3"
+                  pointerEvents="none"
+                />
                 <text
                   x={cube.centerX}
-                  y={cube.centerY - 5}
+                  y={cube.topCenterY}
                   textAnchor="middle"
-                  fontSize="11"
+                  fontSize="12"
                   fontWeight="bold"
                   fill="white"
                   pointerEvents="none"
                   className="select-none"
                 >
-                  {node.label.length > 16 ? node.label.substring(0, 14) + "..." : node.label}
+                  {node.label}
                 </text>
-                {/* Node type indicator */}
-                <circle
-                  cx={cube.centerX}
-                  cy={cube.centerY + 10}
-                  r="2.5"
-                  fill="rgba(255,255,255,0.7)"
-                />
               </g>
             )}
           </g>
