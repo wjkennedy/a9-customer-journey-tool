@@ -132,6 +132,8 @@ export function Toolbar() {
           width: `${bounds.width * scale + 100}px`,
           height: `${bounds.height * scale + 100}px`,
         },
+        cacheBust: true,
+        pixelRatio: 1,
         filter: (node) => {
           if (node.classList?.contains("react-flow__controls")) return false
           if (node.classList?.contains("react-flow__minimap")) return false
@@ -147,7 +149,8 @@ export function Toolbar() {
       link.click()
     } catch (error) {
       console.error("Failed to export SVG:", error)
-      alert("Failed to export SVG. Please try again.")
+      viewport.style.transform = (document.querySelector(".react-flow__viewport") as HTMLElement)?.style.transform || "none"
+      alert("SVG export failed. The ReactFlow diagram may not have rendered completely. Please try exporting PNG instead.")
     }
   }
 
@@ -179,6 +182,8 @@ export function Toolbar() {
           width: `${bounds.width * scale + 100}px`,
           height: `${bounds.height * scale + 100}px`,
         },
+        cacheBust: true,
+        pixelRatio: 1,
         filter: (node) => {
           if (node.classList?.contains("react-flow__controls")) return false
           if (node.classList?.contains("react-flow__minimap")) return false
@@ -194,7 +199,8 @@ export function Toolbar() {
       link.click()
     } catch (error) {
       console.error("Failed to export PNG:", error)
-      alert("Failed to export PNG. Please try again.")
+      viewport.style.transform = (document.querySelector(".react-flow__viewport") as HTMLElement)?.style.transform || "none"
+      alert("PNG export failed. The ReactFlow diagram may not have rendered completely. Please try again or use JSON export.")
     }
   }
 
