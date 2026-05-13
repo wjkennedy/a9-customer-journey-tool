@@ -16,7 +16,6 @@ const projectIsometric = (x: number, y: number, z: number) => {
 const calculateNodePositions = (nodes: any[], edges: any[]) => {
   const positions: Record<string, { x: number; y: number; depth: number }> = {}
   const nodeMap = new Map(nodes.map((n) => [n.id, n]))
-  const visited = new Set<string>()
   const depthMap = new Map<string, number>()
 
   // Find root nodes (no incoming edges)
@@ -27,13 +26,17 @@ const calculateNodePositions = (nodes: any[], edges: any[]) => {
 
   const roots = nodes.filter((n) => !incomingEdges.has(n.id))
 
+  // If no roots found, treat first node as root
+  if (roots.length === 0 && nodes.length > 0) {
+    roots.push(nodes[0])
+  }
+
   // BFS to calculate depths
   const queue = [...roots]
   let currentDepth = 0
 
   while (queue.length > 0) {
     const nextQueue: typeof nodes = []
-    const depthQueue: Record<string, number[]> = {}
 
     for (const node of queue) {
       depthMap.set(node.id, currentDepth)
@@ -51,15 +54,34 @@ const calculateNodePositions = (nodes: any[], edges: any[]) => {
     currentDepth++
   }
 
-  // Position nodes based on depth
+  // Position nodes based on depth with compact spacing
+  const maxDepth = Math.max(...Array.from(depthMap.values()), 0)
+  const depthCounts = new Map<number, number>()
+  
   nodes.forEach((node) => {
     const depth = depthMap.get(node.id) || 0
-    const nodesAtDepth = nodes.filter((n) => depthMap.get(n.id) === depth).length
-    const indexAtDepth = nodes.filter((n) => depthMap.get(n.id) === depth && nodes.indexOf(n) <= nodes.indexOf(node)).length - 1
+    depthCounts.set(depth, (depthCounts.get(depth) || 0) + 1)
+  })
 
+  const indexAtDepthMap = new Map<string, number>()
+  const depthIndexCounter = new Map<number, number>()
+
+  nodes.forEach((node) => {
+    const depth = depthMap.get(node.id) || 0
+    const currentIndex = depthIndexCounter.get(depth) || 0
+    indexAtDepthMap.set(node.id, currentIndex)
+    depthIndexCounter.set(depth, currentIndex + 1)
+  })
+
+  nodes.forEach((node) => {
+    const depth = depthMap.get(node.id) || 0
+    const indexAtDepth = indexAtDepthMap.get(node.id) || 0
+    const countAtDepth = depthCounts.get(depth) || 1
+
+    // Compact spacing: 200px horizontal between depths, 140px vertical between nodes
     positions[node.id] = {
-      x: 100 + depth * 280,
-      y: 120 + indexAtDepth * 240,
+      x: 80 + depth * 200,
+      y: 80 + indexAtDepth * 140,
       depth,
     }
   })
@@ -82,6 +104,26 @@ export function IsometricView() {
   const boxHeight = 80
   const boxDepth = 50
   const nodePositions = calculateNodePositions(currentJourney.nodes, currentJourney.edges)
+
+  // Calculate bounds for proper viewBox sizing
+  let minX = Infinity,
+    minY = Infinity,
+    maxX = -Infinity,
+    maxY = -Infinity
+  
+  currentJourney.nodes.forEach((node) => {
+    const pos = nodePositions[node.id]
+    if (pos) {
+      minX = Math.min(minX, pos.x - 50)
+      minY = Math.min(minY, pos.y - 100)
+      maxX = Math.max(maxX, pos.x + boxWidth + 50)
+      maxY = Math.max(maxY, pos.y + boxHeight + 100)
+    }
+  })
+
+  const width = maxX - minX + 100
+  const height = maxY - minY + 100
+  const viewBoxStr = `${minX - 20} ${minY - 20} ${width} ${height}`
 
   // Generate isometric cube faces with all visible surfaces
   const generateCube = (x: number, y: number, z: number, color: string) => {
@@ -141,7 +183,8 @@ export function IsometricView() {
   return (
     <svg
       className="w-full h-full"
-      viewBox="0 0 1400 900"
+      viewBox={viewBoxStr}
+      preserveAspectRatio="xMidYMid meet"
       style={{
         backgroundColor: "#1a1a2e",
       }}
